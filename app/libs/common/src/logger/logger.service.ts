@@ -14,7 +14,9 @@ export class LoggerService {
   ) {}
 
   info(data: any) {
-    return this.logger.info(JSON.stringify(data));
+    return this.logger.info(
+      typeof data === 'object' ? JSON.stringify(data) : data,
+    );
   }
 
   error(data: any) {

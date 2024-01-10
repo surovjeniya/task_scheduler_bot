@@ -2,10 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
-import {
-  ElasticsearchTransformer,
-  ElasticsearchTransport,
-} from 'winston-elasticsearch';
+import { ElasticsearchTransport } from 'winston-elasticsearch';
 
 @Module({
   imports: [
@@ -25,7 +22,6 @@ import {
           transports: [
             new winston.transports.Console(),
             new ElasticsearchTransport({
-              // transformer: (logData) => ElasticsearchTransformer(logData),
               index,
               clientOpts: {
                 node: `http://${elastic_host}:${elastic_port}`,

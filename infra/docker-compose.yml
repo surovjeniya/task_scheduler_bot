@@ -82,7 +82,6 @@ services:
     hostname: $CACHE_SERVICE_HOSTNAME
     image: $CACHE_SERVICE_IMAGE
     container_name: $CACHE_SERVICE_CONTAINER_NAME
-    # command: redis-server --save 20 1 --loglevel warning --requirepass $CACHE_SERVICE_PASSWORD
     volumes:
       - cache:/data
     ports:
@@ -124,10 +123,11 @@ services:
       - infra
       - elk
     depends_on:
-      - ${DB_SERVICE_HOSTNAME}
-      - ${ELASTICSEARCH_SERVICE_HOSTNAME}
-      - ${KIBANA_SERVICE_HOSTNAME}
-      - ${LOGSTASH_SERVICE_HOSTNAME}
+      - db-service
+      - elasticsearch-service
+      - kibana-service
+      - logstash-service
+      - cache-service
     ports:
       - "$APP_SERVICE_PORT:$APP_SERVICE_PORT"
 
@@ -149,8 +149,10 @@ services:
     depends_on:
       - db-service
       - elasticsearch-service
+      - kibana-service
+      - logstash-service
+      - cache-service
     ports:
       - "$APP_SERVICE_PORT:$APP_SERVICE_PORT"
     volumes:
       - ../app:/usr/src/app
-      # - ../app/logs:/usr/src/app/logs
