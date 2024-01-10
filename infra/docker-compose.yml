@@ -10,6 +10,9 @@ networks:
     driver: bridge
 # volumes
 volumes:
+  rabbitmq:
+    name: $RABBITMQ_VOLUME_NAME
+    driver: local
   kibana:
     name: $KIBANA_VOLUME_NAME
     driver: local
@@ -25,6 +28,23 @@ volumes:
 
 # services
 services:
+  # rabbitmq-service
+  rabbitmq-service:
+    hostname: $RABBITMQ_SERVICE_HOSTNAME
+    image: $RABBIMT_MQ_SERVICE_IMAGE
+    container_name: $RABBITMQ_SERVICE_CONTAINER_NAME
+    ports:
+      - "$RABBITMQ_SERVICE_PORT:$RABBITMQ_SERVICE_PORT"
+      - "$RABBITMQ_SERVICE_MANAGMENT_PORT:$RABBITMQ_SERVICE_MANAGMENT_PORT"
+    restart: unless-stopped
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq
+    networks:
+      - infra
+    environment:
+      - RABBITMQ_DEFAULT_USER=$RABBITMQ_SERVICE_USERNAME
+      - RABBITMQ_DEFAULT_PASS=$RABBITMQ_SERVICE_PASSWORD
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit disk_free_limit 2147483648
   # elasticsearch-service
   elasticsearch-service:
     hostname: $ELASTICSEARCH_SERVICE_HOSTNAME
@@ -128,6 +148,7 @@ services:
       - kibana-service
       - logstash-service
       - cache-service
+      - rabbitmq-service
     ports:
       - "$APP_SERVICE_PORT:$APP_SERVICE_PORT"
 
@@ -152,6 +173,7 @@ services:
       - kibana-service
       - logstash-service
       - cache-service
+      - rabbitmq-service
     ports:
       - "$APP_SERVICE_PORT:$APP_SERVICE_PORT"
     volumes:

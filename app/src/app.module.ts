@@ -1,4 +1,4 @@
-import { DataBaseModule, LoggerModule, LoggerService } from '@app/common';
+import { DataBaseModule } from '@app/common';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
@@ -13,7 +13,6 @@ import { VoiceConverterModule } from './voice-converter/voice-converter.module';
 
 @Module({
   imports: [
-    LoggerModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -58,6 +57,6 @@ import { VoiceConverterModule } from './voice-converter/voice-converter.module';
     VoiceConverterModule,
   ],
   controllers: [],
-  providers: [LoggerService],
+  providers: [],
 })
 export class AppModule {}

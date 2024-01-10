@@ -1,20 +1,24 @@
-import { Command, Ctx, Update } from 'nestjs-telegraf';
+import { Command, Ctx, InlineQuery, Update } from 'nestjs-telegraf';
 import { TelegrafContext } from 'src/interface/telegraf-context.interface';
 import { CommandService } from './command.service';
-import { LoggerService } from '@app/common';
+import { WinstonLogger } from '@app/common';
+import { ConfigService } from '@nestjs/config';
 
 @Update()
 export class CommandUpdate {
+  private logger: WinstonLogger;
   constructor(
     private readonly commandService: CommandService,
-    private readonly loggerService: LoggerService,
-  ) {}
+    private readonly configService: ConfigService,
+  ) {
+    this.logger = new WinstonLogger(
+      this.configService.get('APP_SERVICE_CONTAINER_NAME'),
+      this.configService,
+    );
+  }
 
   @Command('start')
   async startCommandHandler(@Ctx() ctx: TelegrafContext) {
-    ctx.session.action = null;
-
-    this.loggerService.setCommand('START').info('start command');
     await this.commandService.validateUser(ctx.from);
   }
 }
